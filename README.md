@@ -134,8 +134,5 @@ sprint-report/
 
 ## License
 
-Internal use only - Company project
+Open source
 
-## Support
-
-For issues or questions, contact the development team.
