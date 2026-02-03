@@ -19,7 +19,6 @@ export const exportSprintPdf = async (data: SprintReportData, aiSummary?: string
     link.click()
     document.body.removeChild(link)
 
-    // Clean up URL after a short delay to ensure download started
     setTimeout(() => {
       URL.revokeObjectURL(url)
     }, 100)

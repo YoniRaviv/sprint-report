@@ -35,7 +35,6 @@ const fetchJson = async <T>(path: string, init?: RequestInit): Promise<T> => {
           errorMessage = body
         }
       } catch {
-        // Ignore parsing errors, use statusText
       }
       throw new Error(errorMessage || `Request failed with status ${response.status}`)
     }
@@ -133,17 +132,14 @@ export const fetchSprintReport = async (sprintId: number): Promise<SprintReportD
   }
 }
 
-/** Fetch enriched sprint data with changelogs and comments for AI analysis */
 export const fetchEnrichedSprintData = (sprintId: number) =>
   fetchJson<EnrichedSprintData>(`/api/jira/sprint/${sprintId}/enriched`)
 
-/** Generate AI summary from enriched sprint data */
 export const generateAISummary = async (enrichedData: EnrichedSprintData): Promise<AISummaryResponse> =>
   fetchJson<AISummaryResponse>('/api/ai/summarize-sprint', {
     method: 'POST',
     body: JSON.stringify({ enrichedData }),
   })
 
-/** Check if Ollama AI is available */
 export const checkAIStatus = () => fetchJson<AIStatus>('/api/ai/status')
 

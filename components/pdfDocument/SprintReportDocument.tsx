@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     fontSize: 10,
   },
-  // AI Summary styles
   summarySection: {
     marginTop: 16,
     paddingTop: 12,
@@ -97,9 +96,6 @@ const styles = StyleSheet.create({
   },
 })
 
-/**
- * Parse markdown-like AI summary into PDF elements
- */
 const renderAISummary = (summary: string) => {
   const lines = summary.split('\n')
   const elements: React.ReactElement[] = []
@@ -109,7 +105,6 @@ const renderAISummary = (summary: string) => {
     
     if (!line) continue
     
-    // Section headings (## heading)
     if (line.startsWith('## ')) {
       const text = stripMarkdown(line.slice(3))
       elements.push(
@@ -120,7 +115,6 @@ const renderAISummary = (summary: string) => {
       continue
     }
     
-    // Bullet points
     if (isBulletPoint(line)) {
       const text = stripMarkdown(removeBulletMarker(line))
       elements.push(
@@ -131,7 +125,6 @@ const renderAISummary = (summary: string) => {
       continue
     }
     
-    // Regular text
     const text = stripMarkdown(line)
     elements.push(
       <Text key={`p-${i}`} style={styles.summaryText}>
@@ -209,7 +202,6 @@ export const SprintReportDocument = ({ data, aiSummary }: SprintReportDocumentPr
         ))}
       </View>
 
-      {/* AI Summary Section */}
       {aiSummary && (
         <View style={styles.summarySection} break>
           <Text style={styles.summaryHeader}>✨ AI Sprint Analysis</Text>

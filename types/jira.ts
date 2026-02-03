@@ -75,7 +75,6 @@ export type SprintReportData = {
   aggregates: SprintAggregates
 }
 
-// AI Summary types
 export type StatusChange = {
   from: string
   to: string

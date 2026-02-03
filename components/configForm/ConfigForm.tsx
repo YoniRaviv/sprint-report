@@ -38,7 +38,6 @@ const ConfigForm = ({ onRefresh }: ConfigFormProps) => {
     staleTime: 60_000,
   })
 
-  // Sprints are already filtered (last 12 months) and sorted (most recent first) by the server
   const orderedSprints = useMemo(
     () => sprintsQuery.data?.values ?? [],
     [sprintsQuery.data?.values],
@@ -55,9 +54,7 @@ const ConfigForm = ({ onRefresh }: ConfigFormProps) => {
       if (sprintId) setSprintId(undefined)
       return
     }
-    // Keep current sprint if it's still valid
     if (sprintId && orderedSprints.some((s) => s?.id === sprintId)) return
-    // Otherwise select active sprint or first available
     const activeSprint = orderedSprints.find((sprint) => sprint?.state === 'active')
     const selectedId = activeSprint?.id ?? orderedSprints[0]?.id
     if (selectedId) {

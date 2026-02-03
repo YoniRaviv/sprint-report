@@ -21,7 +21,6 @@ type SummarySection = {
   content: string[]
 }
 
-/** Get display info for a provider */
 const getProviderInfo = (provider: AIProvider) => {
   switch (provider) {
     case 'gemini':
@@ -33,7 +32,6 @@ const getProviderInfo = (provider: AIProvider) => {
   }
 }
 
-/** Get status message for providers */
 const getStatusMessage = (providers: AIProviderStatus[]): string => {
   const gemini = providers.find(p => p.name === 'gemini')
   const ollama = providers.find(p => p.name === 'ollama')
@@ -48,7 +46,6 @@ const getStatusMessage = (providers: AIProviderStatus[]): string => {
   return 'Using rule-based analysis'
 }
 
-/** Map section titles to icons */
 const getSectionIcon = (title: string): string => {
   const lower = title.toLowerCase()
   if (lower.includes('accomplishment') || lower.includes('overview')) return '🎯'
@@ -61,7 +58,6 @@ const getSectionIcon = (title: string): string => {
   return '📌'
 }
 
-/** Parse summary text into sections */
 const parseSummaryIntoSections = (text: string): SummarySection[] => {
   const sections: SummarySection[] = []
   const lines = text.split('\n')
@@ -70,7 +66,6 @@ const parseSummaryIntoSections = (text: string): SummarySection[] => {
   for (const line of lines) {
     const trimmed = line.trim()
     
-    // New section header
     if (trimmed.startsWith('## ')) {
       if (currentSection) {
         sections.push(currentSection)
@@ -84,13 +79,11 @@ const parseSummaryIntoSections = (text: string): SummarySection[] => {
       continue
     }
     
-    // Content for current section
     if (currentSection && trimmed) {
       currentSection.content.push(trimmed)
     }
   }
   
-  // Push last section
   if (currentSection) {
     sections.push(currentSection)
   }
@@ -98,7 +91,6 @@ const parseSummaryIntoSections = (text: string): SummarySection[] => {
   return sections
 }
 
-/** Accordion section component */
 const AccordionSection = ({ 
   section, 
   isOpen, 
@@ -110,13 +102,11 @@ const AccordionSection = ({
 }) => {
   const renderContent = (lines: string[]) => {
     return lines.map((line, i) => {
-      // Bullet points
       if (isBulletPoint(line)) {
         return (
           <li key={i} dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(removeBulletMarker(line)) }} />
         )
       }
-      // Regular text
       return (
         <p key={i} dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(line) }} />
       )
@@ -145,16 +135,11 @@ const AccordionSection = ({
   )
 }
 
-/**
- * AI-powered sprint summary component
- * Supports: Gemini (cloud) > Ollama (local) > Rule-based (fallback)
- */
 const AISummary = ({ sprintId }: AISummaryProps) => {
   const { summary, setSummary, clearSummary } = useAISummaryStore()
-  const [openSections, setOpenSections] = useState<Set<number>>(new Set([0])) // First section open by default
+  const [openSections, setOpenSections] = useState<Set<number>>(new Set([0]))
   const [lastSprintId, setLastSprintId] = useState<number | undefined>(sprintId)
 
-  // Clear summary and reset accordion when sprint changes
   useEffect(() => {
     if (sprintId !== lastSprintId) {
       setLastSprintId(sprintId)
@@ -163,7 +148,6 @@ const AISummary = ({ sprintId }: AISummaryProps) => {
     }
   }, [sprintId, lastSprintId, clearSummary])
 
-  // Check AI status on mount
   const { data: aiStatus } = useQuery({
     queryKey: ['ai-status'],
     queryFn: checkAIStatus,
@@ -171,7 +155,6 @@ const AISummary = ({ sprintId }: AISummaryProps) => {
     retry: false,
   })
 
-  // Mutation for generating AI summary
   const {
     mutate: generateSummary,
     isPending: isGenerating,
@@ -183,12 +166,10 @@ const AISummary = ({ sprintId }: AISummaryProps) => {
         throw new Error('No sprint selected')
       }
       try {
-        // First fetch enriched data
         const enrichedData: EnrichedSprintData = await fetchEnrichedSprintData(sprintId)
         if (!enrichedData) {
           throw new Error('Failed to fetch sprint data')
         }
-        // Then generate summary
         const summary = await generateAISummary(enrichedData)
         if (!summary) {
           throw new Error('Failed to generate summary')
@@ -202,7 +183,7 @@ const AISummary = ({ sprintId }: AISummaryProps) => {
     onSuccess: (data) => {
       if (data) {
         setSummary(data)
-        setOpenSections(new Set([0])) // Open first section
+        setOpenSections(new Set([0]))
       }
     },
   })
@@ -265,12 +246,10 @@ const AISummary = ({ sprintId }: AISummaryProps) => {
       </header>
 
       <div className={styles.content}>
-        {/* No sprint selected */}
         {!sprintId && (
           <p className={styles.placeholder}>Select a sprint to generate AI summary</p>
         )}
 
-        {/* Initial state - show generate button */}
         {sprintId && !summary && !isGenerating && !generateError && (
           <>
             <button
@@ -282,7 +261,6 @@ const AISummary = ({ sprintId }: AISummaryProps) => {
               Generate AI Summary
             </button>
 
-            {/* Provider status indicators */}
             <div className={styles.providerList}>
               <div className={styles.providerItem}>
                 <span className={styles.statusDot} data-active={geminiAvailable} />
@@ -301,7 +279,6 @@ const AISummary = ({ sprintId }: AISummaryProps) => {
               </div>
             </div>
 
-            {/* Setup hint when no AI is available */}
             {!hasAI && (
               <div className={styles.installHint}>
                 <strong>💡 Enable AI-powered summaries:</strong>
@@ -328,7 +305,6 @@ const AISummary = ({ sprintId }: AISummaryProps) => {
           </>
         )}
 
-        {/* Loading state */}
         {sprintId && isGenerating && (
           <div className={styles.loading}>
             <div className={styles.spinner} />
@@ -341,7 +317,6 @@ const AISummary = ({ sprintId }: AISummaryProps) => {
           </div>
         )}
 
-        {/* Error state */}
         {sprintId && generateError && (
           <div className={styles.error}>
             <span className={styles.errorIcon}>⚠️</span>
@@ -354,7 +329,6 @@ const AISummary = ({ sprintId }: AISummaryProps) => {
           </div>
         )}
 
-        {/* Summary content with accordions */}
         {summary && !isGenerating && sections.length > 0 && (
           <div className={styles.summaryAccordions}>
             <div className={styles.accordionControls}>
