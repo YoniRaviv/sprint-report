@@ -132,6 +132,24 @@ sprint-report/
 - **PDF Generation**: @react-pdf/renderer
 - **AI**: Google Gemini API, Ollama (local), rule-based fallback
 
+## Future Enhancements
+
+### Team Lead Dashboard
+A dedicated view for team leaders to:
+- View aggregated sprint summaries across all team members
+- Compare individual performance metrics
+- Identify team-wide patterns and blockers
+- Generate consolidated team reports
+
+### Interactive Data Visualization
+Enhanced analytics with visual insights:
+- Sprint velocity trends over time
+- Story points vs time spent comparison charts
+- Workflow efficiency metrics (cycle time, lead time)
+- Issue type distribution graphs
+- Team capacity and burndown charts
+- Quality metrics (bug rates, QA returns over time)
+
 ## License
 
 Open source
